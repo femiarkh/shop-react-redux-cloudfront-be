@@ -1,12 +1,14 @@
 import 'source-map-support/register';
 
-import { formatJSONErrorResponse, formatJSONResponse } from '@libs/apiGateway';
-import { middyfy } from '@libs/lambda';
+import {
+  formatJSONErrorResponse,
+  formatJSONResponse,
+} from '../../libs/apiGateway';
+import { middyfy } from '../../libs/lambda';
 
 import products from '../../products';
-import { Handler } from 'aws-lambda';
 
-const getProductsById: Handler = async (event) => {
+export const getProductsById = async (event) => {
   const product = products.find(
     (item) => item.id === +event.pathParameters?.id
   );
