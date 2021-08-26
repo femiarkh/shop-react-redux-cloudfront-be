@@ -4,8 +4,9 @@ import { formatJSONResponse } from '@libs/apiGateway';
 import { middyfy } from '@libs/lambda';
 
 import products from '../../products';
+import { Handler } from 'aws-lambda';
 
-const product = async (event) => {
+const product: Handler = async (_event) => {
   return formatJSONResponse(products);
 };
 
