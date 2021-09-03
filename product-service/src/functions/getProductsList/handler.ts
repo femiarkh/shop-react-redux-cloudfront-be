@@ -1,9 +1,13 @@
 import 'source-map-support/register';
 import { Client } from 'pg';
 
-import { formatJSONErrorResponse } from '../../libs/apiGateway';
+import {
+  formatJSONErrorResponse,
+  formatJSONResponse,
+} from '../../libs/apiGateway';
 import { middyfy } from '../../libs/lambda';
 import { dbOptions } from '../../dbOptions';
+import { StatusCodes } from 'http-status-codes';
 
 export const getProductsList = async (_event) => {
   const client = new Client(dbOptions);
@@ -21,9 +25,12 @@ export const getProductsList = async (_event) => {
     join stocks
     on products.id = stocks.product_id
     `);
-    return products;
+    return formatJSONResponse(products);
   } catch (error) {
-    return formatJSONErrorResponse(500, 'Something went terribly wrong.');
+    return formatJSONErrorResponse(
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      'Something went terribly wrong.'
+    );
   } finally {
     client.end();
   }

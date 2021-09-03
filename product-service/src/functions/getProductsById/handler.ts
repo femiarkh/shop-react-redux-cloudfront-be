@@ -1,9 +1,13 @@
 import 'source-map-support/register';
 import { Client } from 'pg';
 
-import { formatJSONErrorResponse } from '../../libs/apiGateway';
+import {
+  formatJSONErrorResponse,
+  formatJSONResponse,
+} from '../../libs/apiGateway';
 import { middyfy } from '../../libs/lambda';
 import { dbOptions } from '../../dbOptions';
+import { StatusCodes } from 'http-status-codes';
 
 export const getProductsById = async (event) => {
   const client = new Client(dbOptions);
@@ -23,11 +27,19 @@ export const getProductsById = async (event) => {
     where products.id = '${event.pathParameters?.id}'
     `);
     if (!product.length) {
-      return formatJSONErrorResponse(404, 'Product not found.');
+      return formatJSONErrorResponse(
+        StatusCodes.NOT_FOUND,
+        'Product not found.'
+      );
     }
-    return product[0];
+    return formatJSONResponse(product[0]);
   } catch (error) {
-    return formatJSONErrorResponse(500, 'Something went terribly wrong.');
+    return formatJSONErrorResponse(
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      'Something went terribly wrong.'
+    );
+  } finally {
+    client.end();
   }
 };
 

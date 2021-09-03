@@ -2,12 +2,12 @@ import type { AWS } from '@serverless/typescript';
 
 import getProductsList from '@functions/getProductsList';
 import getProductsById from '@functions/getProductsById';
+import addProduct from '@functions/addProduct';
 
 const { PG_HOST, PG_PORT, PG_DATABASE, PG_USERNAME, PG_PASSWORD } = process.env;
 
 const serverlessConfiguration: AWS = {
   service: 'product-service',
-  useDotenv: true,
   frameworkVersion: '2',
   custom: {
     webpack: {
@@ -15,7 +15,7 @@ const serverlessConfiguration: AWS = {
       includeModules: true,
     },
   },
-  plugins: ['serverless-webpack'],
+  plugins: ['serverless-webpack', 'serverless-dotenv-plugin'],
   provider: {
     name: 'aws',
     runtime: 'nodejs14.x',
@@ -36,7 +36,7 @@ const serverlessConfiguration: AWS = {
     region: 'eu-west-1',
   },
   // import the function via paths
-  functions: { getProductsList, getProductsById },
+  functions: { getProductsList, getProductsById, addProduct },
 };
 
 module.exports = serverlessConfiguration;
