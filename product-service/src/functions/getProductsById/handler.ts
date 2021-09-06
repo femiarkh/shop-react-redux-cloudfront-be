@@ -13,7 +13,7 @@ export const getProductsById = async (event) => {
   const client = new Client(dbOptions);
   try {
     await client.connect();
-    const { rows: product } = await client.query(`
+    const queryResult = await client.query(`
     select
       products.id as id,
       stocks.count as count,
@@ -26,13 +26,13 @@ export const getProductsById = async (event) => {
     on products.id = stocks.product_id
     where products.id = '${event.pathParameters?.id}'
     `);
-    if (!product.length) {
+    if (!queryResult) {
       return formatJSONErrorResponse(
         StatusCodes.NOT_FOUND,
         'Product not found.'
       );
     }
-    return formatJSONResponse(product[0]);
+    return formatJSONResponse(queryResult.rows[0]);
   } catch (error) {
     return formatJSONErrorResponse(
       StatusCodes.INTERNAL_SERVER_ERROR,
