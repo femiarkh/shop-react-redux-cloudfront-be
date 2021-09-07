@@ -8,11 +8,11 @@ import {
 import { middyfy } from '../../libs/lambda';
 import { dbOptions } from '../../dbOptions';
 import { StatusCodes } from 'http-status-codes';
-import { validate } from './validate';
+import { validateProduct } from './validate';
 
 export const addProduct = async (event) => {
   const client = new Client(dbOptions);
-  const validationErrors = validate(event.body);
+  const validationErrors = validateProduct(event.body);
   if (validationErrors.length) {
     return formatJSONErrorResponse(
       StatusCodes.BAD_REQUEST,
