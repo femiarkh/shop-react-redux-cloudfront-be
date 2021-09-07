@@ -26,7 +26,7 @@ export const getProductsById = async (event) => {
     on products.id = stocks.product_id
     where products.id = '${event.pathParameters?.id}'
     `);
-    if (!queryResult) {
+    if (!queryResult.rows.length) {
       return formatJSONErrorResponse(
         StatusCodes.NOT_FOUND,
         'Product not found.'
@@ -34,6 +34,12 @@ export const getProductsById = async (event) => {
     }
     return formatJSONResponse(queryResult.rows[0]);
   } catch (error) {
+    if (error.code === '22P02') {
+      return formatJSONErrorResponse(
+        StatusCodes.NOT_FOUND,
+        'Product not found.'
+      );
+    }
     return formatJSONErrorResponse(
       StatusCodes.INTERNAL_SERVER_ERROR,
       'Something went terribly wrong.'
