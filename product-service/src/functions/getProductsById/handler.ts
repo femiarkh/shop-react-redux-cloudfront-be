@@ -10,6 +10,9 @@ import { dbOptions } from '../../dbOptions';
 import { StatusCodes } from 'http-status-codes';
 
 export const getProductsById = async (event) => {
+  console.log(`[${new Date().toLocaleString()}]`);
+  console.log('[REQUEST]: get a product by id');
+  console.log(`[Path parameters]: ${JSON.stringify(event.pathParameters)}`);
   const client = new Client(dbOptions);
   try {
     await client.connect();

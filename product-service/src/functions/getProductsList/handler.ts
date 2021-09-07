@@ -10,6 +10,8 @@ import { dbOptions } from '../../dbOptions';
 import { StatusCodes } from 'http-status-codes';
 
 export const getProductsList = async (_event) => {
+  console.log(`[${new Date().toLocaleString()}]`);
+  console.log('[REQUEST]: get products list');
   const client = new Client(dbOptions);
   try {
     await client.connect();

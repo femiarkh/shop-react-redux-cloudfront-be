@@ -11,6 +11,10 @@ import { StatusCodes } from 'http-status-codes';
 import { validateProduct } from './validate';
 
 export const addProduct = async (event) => {
+  console.log(`[${new Date().toLocaleString()}]`);
+  console.log('[REQUEST]: add a product');
+  console.log(`[Request body]: ${JSON.stringify(event.body)}`);
+
   const client = new Client(dbOptions);
   const validationErrors = validateProduct(event.body);
   if (validationErrors.length) {
@@ -19,8 +23,9 @@ export const addProduct = async (event) => {
       JSON.stringify(validationErrors)
     );
   }
+
   const { title, description, price, count, image } = event.body;
-  console.log(title, description, price, count, image);
+
   try {
     await client.connect();
 
