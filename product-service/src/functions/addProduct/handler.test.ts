@@ -34,8 +34,7 @@ describe('addProduct handler', () => {
   });
   it('makes queries with product data to the db', () => {
     return addProduct(mockEvent).then(() => {
-      expect(mockQuery).toBeCalledTimes(2);
-      expect(mockQuery.mock.calls[0][0].trim()).toBe(
+      expect(mockQuery.mock.calls[1][0].trim()).toBe(
         `insert into products (title, description, price, image) values
         ('test-product', 'This is just a test.', 9999, 'https://path/to/image')`
       );

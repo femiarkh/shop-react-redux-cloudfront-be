@@ -28,7 +28,7 @@ export const addProduct = async (event) => {
 
   try {
     await client.connect();
-
+    await client.query('BEGIN');
     await client.query(`
       insert into products (title, description, price, image) values
         ('${title}', '${description}', ${+price}, '${image}')
@@ -46,7 +46,7 @@ export const addProduct = async (event) => {
       insert into stocks (product_id, count) values
         ('${id}', '${+count}')
     `);
-
+    await client.query('COMMIT');
     return formatJSONResponse({
       message: 'Product added.',
     });
