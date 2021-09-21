@@ -1,15 +1,18 @@
 import 'source-map-support/register';
 
 import { S3 } from 'aws-sdk';
-import { middyfy } from '@libs/lambda';
+import { middyfy } from '../../libs/lambda';
 import { APIGatewayProxyEvent } from 'aws-lambda';
 
 const BUCKET = 'rss-femiarkh-import-service';
-let links = [];
 let status = 200;
 
-const importProductsFile = async (event: APIGatewayProxyEvent) => {
-  console.log(event.queryStringParameters);
+export const importProductsFile = async (event: APIGatewayProxyEvent) => {
+  console.log(`[${new Date().toLocaleString()}]`);
+  console.log('[REQUEST]: import products file');
+  console.log(
+    `[Request parameters]: ${JSON.stringify(event.queryStringParameters)}`
+  );
   const s3 = new S3({ region: 'eu-west-1' });
   const params = {
     Bucket: BUCKET,
