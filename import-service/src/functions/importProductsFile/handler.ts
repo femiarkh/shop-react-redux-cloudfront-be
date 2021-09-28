@@ -14,6 +14,7 @@ export const importProductsFile = async (event: APIGatewayProxyEvent) => {
     `[Request parameters]: ${JSON.stringify(event.queryStringParameters)}`
   );
   const s3 = new S3({ region: 'eu-west-1' });
+  console.log('process.env.SQS_URL', process.env.SQS_URL);
   const params = {
     Bucket: BUCKET,
     Key: `uploaded/${event.queryStringParameters.name}`,
