@@ -2,6 +2,8 @@ import type { AWS } from '@serverless/typescript';
 
 import importProductsFile from '@functions/importProductsFile';
 import importFileParser from '@functions/importFileParser';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 const serverlessConfiguration: AWS = {
   service: 'import-service',
@@ -22,9 +24,6 @@ const serverlessConfiguration: AWS = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-      SQS_URL: {
-        Ref: 'SQSQueue',
-      },
     },
     lambdaHashingVersion: '20201221',
     stage: 'dev',
@@ -43,19 +42,9 @@ const serverlessConfiguration: AWS = {
       {
         Effect: 'Allow',
         Action: 'sqs:*',
-        Resource: 'arn:aws:sqs:eu-west-1:902176630775:bikes-queue',
+        Resource: `arn:aws:sqs:eu-west-1:${process.env.ACC_ID}:catalogItemsQueue`,
       },
     ],
-  },
-  resources: {
-    Resources: {
-      SQSQueue: {
-        Type: 'AWS::SQS::Queue',
-        Properties: {
-          QueueName: 'bikes-queue',
-        },
-      },
-    },
   },
   // import the function via paths
   functions: { importProductsFile, importFileParser },

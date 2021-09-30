@@ -9,6 +9,18 @@ const BUCKET = 'rss-femiarkh-import-service';
 const importFileParser = async (event) => {
   const s3 = new S3({ region: 'eu-west-1' });
   const sqs = new SQS();
+  let QueueUrl: string;
+  try {
+    const getUrlPromiseResult = await sqs
+      .getQueueUrl({
+        QueueName: 'catalogItemsQueue',
+      })
+      .promise();
+    QueueUrl = getUrlPromiseResult.QueueUrl;
+  } catch (err) {
+    console.log('Could not get queue url.');
+    console.log(err);
+  }
 
   for (const record of event.Records) {
     const key = record.s3.object.key;
@@ -16,11 +28,12 @@ const importFileParser = async (event) => {
       Bucket: BUCKET,
       Key: key,
     };
+
     const s3Stream = s3.getObject(params).createReadStream();
     s3Stream.pipe(csv()).on('data', (data) => {
       sqs.sendMessage(
         {
-          QueueUrl: process.env.SQS_URL,
+          QueueUrl,
           MessageBody: JSON.stringify(data),
         },
         (err, data) => {
