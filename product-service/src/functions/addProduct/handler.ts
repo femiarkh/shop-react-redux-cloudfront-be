@@ -8,7 +8,7 @@ import {
 import { middyfy } from '../../libs/lambda';
 import { dbOptions } from '../../dbOptions';
 import { StatusCodes } from 'http-status-codes';
-import { validateProduct } from './validate';
+import { validateProduct } from '../../libs/validateProduct';
 
 export const addProduct = async (event) => {
   console.log(`[${new Date().toLocaleString()}]`);

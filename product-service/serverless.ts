@@ -54,6 +54,21 @@ const serverlessConfiguration: AWS = {
         Type: 'AWS::SQS::Queue',
         Properties: {
           QueueName: 'catalogItemsQueue',
+          VisibilityTimeout: 30,
+          MessageRetentionPeriod: 60,
+          RedrivePolicy: {
+            deadLetterTargetArn: {
+              'Fn::GetAtt': ['ReceiverDeadLetterQueue', 'Arn'],
+            },
+            maxReceiveCount: 1,
+          },
+        },
+      },
+      ReceiverDeadLetterQueue: {
+        Type: 'AWS::SQS::Queue',
+        Properties: {
+          QueueName: 'receiverDLQ',
+          MessageRetentionPeriod: 259200,
         },
       },
     },

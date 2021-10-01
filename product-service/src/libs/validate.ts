@@ -33,7 +33,7 @@ export const validate = (propsData: Validatable[]) => {
           errors.push(`${name} must be a string.`);
         } else if (value.trim().length === 0) {
           errors.push(`${name} length can not be zero.`);
-        } else if (minLength && value.length < minLength) {
+        } else if (minLength && value.trim().length < minLength) {
           errors.push(`${name} is too short.`);
         } else if (maxLength && value.length > maxLength) {
           errors.push(`${name} is too long.`);
@@ -56,8 +56,9 @@ export const validate = (propsData: Validatable[]) => {
         if (typeof value !== 'string') {
           errors.push(`${name} must be a string.`);
         } else if (
-          !value.startsWith('http://') &&
-          !value.startsWith('https://')
+          value.trim() !== '' &&
+          !value.trim().startsWith('http://') &&
+          !value.trim().startsWith('https://')
         ) {
           errors.push(`${name} has wrong url format.`);
         }
