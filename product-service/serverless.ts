@@ -1,11 +1,19 @@
 import type { AWS } from '@serverless/typescript';
-
+import * as dotenv from 'dotenv';
 import getProductsList from '@functions/getProductsList';
 import getProductsById from '@functions/getProductsById';
 import addProduct from '@functions/addProduct';
 import catalogBatchProcess from '@functions/catalogBatchProcess';
 
-const { PG_HOST, PG_PORT, PG_DATABASE, PG_USERNAME, PG_PASSWORD } = process.env;
+dotenv.config();
+const {
+  PG_HOST,
+  PG_PORT,
+  PG_DATABASE,
+  PG_USERNAME,
+  PG_PASSWORD,
+  TEST_EMAIL_1,
+} = process.env;
 
 const serverlessConfiguration: AWS = {
   service: 'product-service',
@@ -34,6 +42,9 @@ const serverlessConfiguration: AWS = {
       SQS_URL: {
         Ref: 'SQSQueue',
       },
+      SNS_ARN: {
+        Ref: 'SNSTopic',
+      },
     },
     lambdaHashingVersion: '20201221',
     stage: 'dev',
@@ -44,6 +55,13 @@ const serverlessConfiguration: AWS = {
         Action: 'sqs:*',
         Resource: {
           'Fn::GetAtt': ['SQSQueue', 'Arn'],
+        },
+      },
+      {
+        Effect: 'Allow',
+        Action: 'sns:*',
+        Resource: {
+          Ref: 'SNSTopic',
         },
       },
     ],
@@ -69,6 +87,22 @@ const serverlessConfiguration: AWS = {
         Properties: {
           QueueName: 'receiverDLQ',
           MessageRetentionPeriod: 259200,
+        },
+      },
+      SNSTopic: {
+        Type: 'AWS::SNS::Topic',
+        Properties: {
+          TopicName: 'rss-aws-2021-sns-topic',
+        },
+      },
+      SNSSubscription: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: TEST_EMAIL_1,
+          Protocol: 'email',
+          TopicArn: {
+            Ref: 'SNSTopic',
+          },
         },
       },
     },
