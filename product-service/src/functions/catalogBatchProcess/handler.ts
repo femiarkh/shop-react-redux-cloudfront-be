@@ -48,6 +48,28 @@ export const catalogBatchProcess = async (event) => {
             insert into stocks (product_id, count) values
               ('${id}', '${+count}')
           `);
+
+        const message = JSON.stringify({
+          title,
+          description,
+          price: +price,
+          count: +count,
+          image,
+        });
+        await sns
+          .publish({
+            Subject: 'New bike was added to the db!',
+            Message: message,
+            TopicArn: process.env.SNS_ARN,
+            MessageAttributes: {
+              price: {
+                DataType: 'Number',
+                StringValue: price,
+              },
+            },
+          })
+          .promise();
+        console.log('Email was sent');
       })
     );
   } catch (err) {
@@ -61,17 +83,6 @@ export const catalogBatchProcess = async (event) => {
 
   await client.query('COMMIT');
   client.end();
-
-  sns.publish(
-    {
-      Subject: 'New bikes were added to the db!',
-      Message: JSON.stringify(event.Records.map((record) => record.body)),
-      TopicArn: process.env.SNS_ARN,
-    },
-    () => {
-      console.log('Email has been sent.');
-    }
-  );
 
   return formatJSONResponse({
     message: 'Products added.',

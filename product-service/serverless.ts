@@ -13,6 +13,7 @@ const {
   PG_USERNAME,
   PG_PASSWORD,
   TEST_EMAIL_1,
+  TEST_EMAIL_2,
 } = process.env;
 
 const serverlessConfiguration: AWS = {
@@ -95,13 +96,29 @@ const serverlessConfiguration: AWS = {
           TopicName: 'rss-aws-2021-sns-topic',
         },
       },
-      SNSSubscription: {
+      SNSSubscriptionOne: {
         Type: 'AWS::SNS::Subscription',
         Properties: {
           Endpoint: TEST_EMAIL_1,
           Protocol: 'email',
           TopicArn: {
             Ref: 'SNSTopic',
+          },
+          FilterPolicy: {
+            price: [{ numeric: ['<', 100] }],
+          },
+        },
+      },
+      SNSSubscriptionTwo: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: TEST_EMAIL_2,
+          Protocol: 'email',
+          TopicArn: {
+            Ref: 'SNSTopic',
+          },
+          FilterPolicy: {
+            price: [{ numeric: ['>=', 100] }],
           },
         },
       },
