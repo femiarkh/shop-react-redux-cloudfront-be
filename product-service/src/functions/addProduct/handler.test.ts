@@ -14,7 +14,7 @@ jest.mock('pg', () => {
   };
 });
 
-jest.mock('./validate', () => ({
+jest.mock('../../libs/validateProduct.ts', () => ({
   validateProduct: jest.fn(() => []),
 }));
 

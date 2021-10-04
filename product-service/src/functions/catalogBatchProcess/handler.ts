@@ -13,10 +13,10 @@ import { dbOptions } from '../../dbOptions';
 export const catalogBatchProcess = async (event) => {
   const client = new Client(dbOptions);
   const sns = new SNS({ region: 'eu-west-1' });
-  await client.connect();
-  await client.query('BEGIN');
 
   try {
+    await client.connect();
+    await client.query('BEGIN');
     await Promise.all(
       event.Records.map(async ({ body }) => {
         console.log(`[${new Date().toLocaleString()}]`);
