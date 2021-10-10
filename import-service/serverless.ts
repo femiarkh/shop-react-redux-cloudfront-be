@@ -2,6 +2,8 @@ import type { AWS } from '@serverless/typescript';
 
 import importProductsFile from '@functions/importProductsFile';
 import importFileParser from '@functions/importFileParser';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 const serverlessConfiguration: AWS = {
   service: 'import-service',
@@ -36,6 +38,11 @@ const serverlessConfiguration: AWS = {
         Effect: 'Allow',
         Action: 's3:*',
         Resource: 'arn:aws:s3:::rss-femiarkh-import-service/*',
+      },
+      {
+        Effect: 'Allow',
+        Action: 'sqs:*',
+        Resource: `arn:aws:sqs:eu-west-1:${process.env.ACC_ID}:catalogItemsQueue`,
       },
     ],
   },
