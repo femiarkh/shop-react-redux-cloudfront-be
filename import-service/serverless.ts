@@ -15,6 +15,9 @@ const serverlessConfiguration: AWS = {
       webpackConfig: './webpack.config.js',
       includeModules: true,
     },
+    authorizerArn: {
+      'Fn::ImportValue': 'basicAuthorizerQualifiedArn',
+    },
   },
   plugins: ['serverless-webpack', 'serverless-dotenv-plugin'],
   provider: {

@@ -1,8 +1,4 @@
 import { handlerPath } from '@libs/handlerResolver';
-import * as dotenv from 'dotenv';
-dotenv.config();
-
-const { BASIC_AUTHORIZER_ARN } = process.env;
 
 export default {
   handler: `${handlerPath(__dirname)}/handler.main`,
@@ -20,7 +16,7 @@ export default {
         },
         authorizer: {
           name: 'basicAuthorizer',
-          arn: BASIC_AUTHORIZER_ARN,
+          arn: '${self:custom.authorizerArn}',
           resultTtlInSeconds: 0,
           identitySource: 'method.request.header.Authorization',
           type: 'request',

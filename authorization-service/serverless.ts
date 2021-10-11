@@ -33,6 +33,15 @@ const serverlessConfiguration: AWS = {
   },
   // import the function via paths
   functions: { basicAuthorizer },
+  resources: {
+    Outputs: {
+      BasicAuthorizerLambdaFunctionQualifiedArn: {
+        Export: {
+          Name: 'basicAuthorizerQualifiedArn',
+        },
+      },
+    },
+  },
 };
 
 module.exports = serverlessConfiguration;
