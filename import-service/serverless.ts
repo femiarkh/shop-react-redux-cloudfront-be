@@ -5,6 +5,8 @@ import importFileParser from '@functions/importFileParser';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
+const { S3_ARN, SQS_ARN } = process.env;
+
 const serverlessConfiguration: AWS = {
   service: 'import-service',
   frameworkVersion: '2',
@@ -13,8 +15,11 @@ const serverlessConfiguration: AWS = {
       webpackConfig: './webpack.config.js',
       includeModules: true,
     },
+    authorizerArn: {
+      'Fn::ImportValue': 'basicAuthorizerQualifiedArn',
+    },
   },
-  plugins: ['serverless-webpack'],
+  plugins: ['serverless-webpack', 'serverless-dotenv-plugin'],
   provider: {
     name: 'aws',
     runtime: 'nodejs14.x',
@@ -32,22 +37,52 @@ const serverlessConfiguration: AWS = {
       {
         Effect: 'Allow',
         Action: 's3:ListBucket',
-        Resource: 'arn:aws:s3:::rss-femiarkh-import-service',
+        Resource: S3_ARN,
       },
       {
         Effect: 'Allow',
         Action: 's3:*',
-        Resource: 'arn:aws:s3:::rss-femiarkh-import-service/*',
+        Resource: `${S3_ARN}/*`,
       },
       {
         Effect: 'Allow',
         Action: 'sqs:*',
-        Resource: `arn:aws:sqs:eu-west-1:${process.env.ACC_ID}:catalogItemsQueue`,
+        Resource: SQS_ARN,
       },
     ],
   },
   // import the function via paths
   functions: { importProductsFile, importFileParser },
+  resources: {
+    Resources: {
+      GatewayResponseDefault4XX: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': "'*'",
+            'gatewayresponse.header.Access-Control-Allow-Headers': "'*'",
+          },
+          ResponseType: 'DEFAULT_4XX',
+          RestApiId: {
+            Ref: 'ApiGatewayRestApi',
+          },
+        },
+      },
+      GatewayResponseDefault5XX: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': "'*'",
+            'gatewayresponse.header.Access-Control-Allow-Headers': "'*'",
+          },
+          ResponseType: 'DEFAULT_5XX',
+          RestApiId: {
+            Ref: 'ApiGatewayRestApi',
+          },
+        },
+      },
+    },
+  },
 };
 
 module.exports = serverlessConfiguration;
